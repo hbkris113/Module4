@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Back End Assessment</title>
+  </head>
+  <body class="container">
+    <p id="FortuneDisplay">Fortune will appear here</p>
+    <button id="fortuneButton">Get a Random Fortune</button>
+
+    <script>
+      const Fortunes = [
+        "You will be rich!",
+        "You will be poor!",
+        "You will be happy!",
+        "You will be sad!",
+        "You will be healthy!",
+        "You will be sick!",
+        "You will be loved!",
+        "You will be hated!",
+        "You will be successful!",
+        "You will be a failure!",
+      ];
+
+      const button = document.getElementById("fortuneButton");
+      const display = document.getElementById("FortuneDisplay");
+
+      button.addEventListener("click", () => {
+        const randomIndex = Math.floor(Math.random() * Fortunes.length);
+        display.innerText = Fortunes[randomIndex];
+      });
+      display.innerText = Fortunes[randomIndex];
+    </script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="main.js"></script>
+    <script>
+      src =
+        "G:\My Drive\devmountain\assessment-backend\assessment-backend\server\index.js";
+    </script>
+
+    <p>Please enter your name:</p>
+    <input type="text" id="firstName" placeholder="First Name" />
+    <input type="text" id="lastName" placeholder="Last Name" />
+    <button id="submitName">Submit</button>
+
+    <button id="twitterShareButton">Share on Twitter</button>
+    <script>
+      document
+        .getElementById("twitterShareButton")
+        .addEventListener("click", function () {
+          window.open(
+            "https://twitter.com/intent/tweet?text=" +
+              document.getElementById("FortuneDisplay").innerText
+          );
+        });
+      const shareURL = "https://twitter.com/intent/tweet?text=";
+      const text = "Please visit this incredible website!";
+      const encodedText = encodeURIComponent(text);
+      const twitterURL = "${shareURL}?text=${encodedText}";
+    </script>
+
+    <p>Select the items you would have if you were rich:</p>
+    <select id="richItems" multiple>
+      <option value="luxury car">Car</option>
+      <option value="house">House</option>
+      <option value="boat">Boat</option>
+      <option value="private jet">Plane</option>
+      <option value="island">Island</option>
+    </select>
+    <button id="submitRichItems">Submit</button>
+
+    <script>
+      document
+        .getElementById("submitRichItems")
+        .addEventListener("click", function () {
+          const richItems = document.getElementById("richItems");
+          const selectedItems = [];
+          for (let options of richItems.options) {
+            if (options.selected) {
+              selectedItems.push(options.value);
+            }
+          }
+          if (selectedItems.length > 0) {
+            alert("You would have: " + selectedItems.join(", "));
+          } else {
+            alert("Please select at least one item.");
+          }
+        });
+    </script>
+    <div>
+      <h1>Inspiration List</h1>
+      <input type="text" id="inspirationInput" />
+      <button onclick="addInspiration()">Add</button>
+      <ul id="list"></ul>
+
+      <script>
+        function addInspiration() {
+          let input = document.getElementById("inspirationInput").value;
+          let list = document.getElementById("list");
+          let item = document.createElement("li");
+          item.appendChild(document.createTextNode(input));
+          list.appendChild(item);
+        }
+      </script>
+
+      <script>
+        function addInspiration() {
+          let input = document.getElementById("inspirationInput").value;
+          let list = document.getElementById("list");
+          let item = document.createElement("li");
+          item.appendChild(document.createTextNode(input));
+          let deleteButton = document.createElement("button");
+          deleteButton.classList.add("delete-button");
+          deleteButton.appendChild(document.createTextNode("Delete"));
+          deleteButton.addEventListener("click", function () {
+            item.remove();
+            removeItem(input);
+          });
+          item.appendChild(deleteButton);
+          list.appendChild(item);
+          items.push(input);
+        }
+
+        function removeItem(item) {
+          let index = items.indexOf(item);
+          if (index > -1) {
+            items.splice(index, 1);
+          }
+        }
+      </script>
+    </div>
+
+    <h1>Inspiration for Goals</h1>
+
+    <button id="inspiration-button">Get Inspiration</button>
+
+    <div id="quote-box"></div>
+
+    <script>
+      const inspirationButton = document.getElementById("inspiration-button"); // Select the button element
+      const quoteBox = document.getElementById("quote-box");
+
+      function getQuote() {
+        fetch("/api/quotes")
+          .then((response) => response.json())
+          .then((data) => {
+            const randomIndex = Math.floor(Math.random() * data.length);
+            const quote = data[randomIndex];
+            quoteBox.textContent = quote;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+      inspirationButton.addEventListener("click", getQuote);
+    </script>
+    <h1>Add a New Quote</h1>
+
+    <div>
+      <label for="quoteInput">Quote:</label>
+      <input type="text" id="quoteInput" />
+    </div>
+
+    <button id="addQuoteButton">Add Quote</button>
+
+    <div id="message"></div>
+
+    <script>
+      let quoteInput = document.getElementById("quoteInput");
+      let addQuoteButton = document.getElementById("addQuoteButton");
+      let message = document.getElementById("message");
+
+      addQuoteButton.addEventListener("click", () => {
+        let newQuote = quoteInput.value;
+
+        if (newQuote) {
+          fetch("/api/quotes", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ quote: newQuote }),
+          })
+            .then((response) => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+            })
+            .then((data) => {
+              message.textContent = `Quote added: ${data.quote}`;
+              quoteInput.value = ""; // Clear the input field
+            })
+            .catch((error) => {
+              message.textContent = `Error: ${error}`;
+            });
+        } else {
+          message.textContent = "Please enter a quote.";
+        }
+      });
+    </script>
+    <h1>Update a Quote</h1>
+
+    <div>
+      <label for="indexInput">Quote Index:</label>
+      <input type="number" id="indexInput">
+    </div>
+  
+    <div>
+      <label for="quoteInput">Updated Quote:</label>
+      <input type="text" id="quoteInput">
+    </div>
+  
+    <button id="updateQuoteButton">Update Quote</button>
+  
+    <div id="message"></div>
+  
+    <script>
+      document.getElementById('updateQuoteButton').addEventListener('click', () => {
+        const indexInput = document.getElementById('indexInput');
+        const quoteInput = document.getElementById('quoteInput');
+        const message = document.getElementById('message');
+        
+        const index = indexInput.value;
+        const updatedQuote = quoteInput.value;
+  
+        if (index !== '' && updatedQuote !== '') {
+          fetch(`/api/quotes/${index}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ quote: updatedQuote }),
+          })
+            .then((response) => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+            })
+            .then((data) => {
+              message.textContent = `Quote updated: ${data}`;
+              indexInput.value = ''; // Clear the input fields
+              quoteInput.value = '';
+            })
+            .catch((error) => {
+              message.textContent = `Error: ${error}`;
+            });
+        } else {
+          message.textContent = "Please enter a valid quote index and an updated quote.";
+        }
+      });
+    </script>
+      <h1>Delete a Quote</h1>
+
+      <div>
+        <label for="indexInput">Quote Index:</label>
+        <input type="number" id="indexInput">
+      </div>
+    
+      <button id="deleteQuoteButton">Delete Quote</button>
+    
+      <div id="message"></div>
+    
+      <script>
+        document.getElementById('deleteQuoteButton').addEventListener('click', () => {
+          const indexInput = document.getElementById('indexInput');
+          const index = indexInput.value;
+    
+          if (index !== '') {
+            fetch(`/api/quotes/${index}`, {
+              method: 'DELETE',
+            })
+              .then((response) => {
+                if (response.ok) {
+                  document.getElementById('message').textContent = `Quote at index ${index} deleted.`;
+                } else {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+              })
+              .catch((error) => {
+                document.getElementById('message').textContent = `Error: ${error}`;
+              });
+          } else {
+            document.getElementById('message').textContent = "Please enter a valid quote index.";
+          }
+        });
+      </script>
+  </body>
+</html>
